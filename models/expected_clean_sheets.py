@@ -5,11 +5,16 @@ import math
 class ExpectedCleanSheets:
     def playerExpectedCleanSheets(self,player,position):
         total = 0.0
-        for doc in player:
+        decay = 0.7
+        weight_sum = 0
+        for i,doc in enumerate(player):
+            print(doc)
+            weight = decay ** i
+            weight_sum += weight
             if doc["minutes"]<60:
                 continue
-            total += math.exp(-(float(doc["expected_goals_conceded"]))) * scoring_rules.FPL_SCORING.clean_sheet[position]
-        return total
+            total += math.exp(-(float(doc["expected_goals_conceded"]))) * scoring_rules.FPL_SCORING.clean_sheet[position] * weight
+        return total/weight_sum
 
 
 

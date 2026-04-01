@@ -10,7 +10,7 @@ from optimisation import pareto
 import pandas as pd
 import plotly.express as px
 
-CURRENT_GAMEWEEK = 31
+CURRENT_GAMEWEEK = 15
 NEXT_GAMEWEEK = CURRENT_GAMEWEEK + 1
 FORM_PERIOD = 4
 try:
@@ -28,6 +28,8 @@ except FileNotFoundError:
                 "round": {"$gte": CURRENT_GAMEWEEK - FORM_PERIOD, "$lte": CURRENT_GAMEWEEK},
                 "element": player["id"]
             }))
+        if validation_period:
+            validation_period.reverse()
         xp = position_xp_calculator.positionXpCalculator(validation_period, player["element_type"])
         adjusted_xp = fixture_difficulty.fixture_difficulty(mongo, player, NEXT_GAMEWEEK, xp)
         expected_points_rows.append({
@@ -37,19 +39,25 @@ except FileNotFoundError:
             "effective_ownership": eo[playertocheck]
         })
     expected_points_df = pd.DataFrame(expected_points_rows)
+    print(expected_points_df)
     expected_points_df.sort_values(by="expected_points", ascending=False, inplace=True)
     expected_points_df.to_csv("expected_points.csv", index=False)
-
+gk_players = expected_points_df[expected_points_df["position"] == "GK"]
 def_players = expected_points_df[expected_points_df["position"] == "DEF"]
 mid_players = expected_points_df[expected_points_df["position"] == "MID"]
 fwd_players = expected_points_df[expected_points_df["position"] == "FWD"]
 
+pareto_mask_gk = pareto.pareto(gk_players)
 pareto_mask_def = pareto.pareto(def_players)
 pareto_mask_mid = pareto.pareto(mid_players)
 pareto_mask_fwd = pareto.pareto(fwd_players)
 
 #eo_fig = px.pie(expected_points_df, values="expected_points", names="web_name")
 #eo_fig.show()
+
+gk_fig = px.scatter(gk_players, x="effective_ownership", y="expected_points", hover_name="web_name",color=pareto_mask_gk)
+gk_fig.show()
+
 def_fig = px.scatter(def_players, x="effective_ownership", y="expected_points",hover_name="web_name",color = pareto_mask_def)
 def_fig.show()
 
