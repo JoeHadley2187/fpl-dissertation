@@ -22,4 +22,4 @@ def positionXpCalculator(validation_period,position):
         xp += expected_goals.playerExpectedGoals(validation_period,pos)
     if pos == "GK":
         xp += gk_saves(validation_period)
-    return xp/5
+    return xp
