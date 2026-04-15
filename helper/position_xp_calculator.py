@@ -4,6 +4,7 @@ from models.expected_clean_sheets import ExpectedCleanSheets
 from models.expected_goals import ExpectedGoals
 from models.expected_minutes import ExpectedMinutes
 from models.gk_saves import gk_saves
+from models.bonus_points import BonusPoints
 from helper.position_dict import position_dict
 
 def positionXpCalculator(validation_period,position):
@@ -11,11 +12,13 @@ def positionXpCalculator(validation_period,position):
     expected_goals = ExpectedGoals()
     expected_defensive_contributions = DefensiveContributions()
     expected_clean_sheets = ExpectedCleanSheets()
+    expected_bonus_points = BonusPoints()
     pos = position_dict.get(position)
 
     xp = expected_minutes.playerExpectedMinutes(validation_period)
     xp += expected_goals.playerExpectedGoals(validation_period,pos)
     xp += expected_defensive_contributions.playerDefensiveContributions(validation_period,pos)
+    xp += expected_bonus_points.bonus_points(validation_period)
     if pos != "FWD":
         xp += expected_clean_sheets.playerExpectedCleanSheets(validation_period,pos)
     if pos != "GK":

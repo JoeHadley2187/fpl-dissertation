@@ -5,7 +5,7 @@ class ExpectedGoals:
     def playerExpectedGoals(self,player,position):
         i = 0
         j = 0
-        decay = 0.7
+        decay = 0.8
         weight_sum = 0
         for k ,doc in enumerate(player):
             weight = decay ** k

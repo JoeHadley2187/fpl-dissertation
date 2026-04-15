@@ -1,3 +1,4 @@
+from config.settings import Settings
 from data import fpl_api as api
 from data import fpl_mongo
 
@@ -15,12 +16,10 @@ mongo.insert_new_collection("fixtures",fpl.get_fixtures())
 mongo.db.create_collection("player-summary")
 mongo.db.create_collection("all_histories")
 mongo.db.create_collection("all_fixtures")
-mongo.db.create_collection("top_10k_managers")
+mongo.db.create_collection("elite_managers")
 
 all_histories = []
 all_fixtures = []
-top_managers = []
-TOP_MANAGERS = 500
 
 
 i = 0
@@ -43,9 +42,9 @@ if all_fixtures:
     mongo.db["all_fixtures"].insert_many(all_fixtures)
 print(mongo.db["all_histories"].count_documents({}))
 
-page_limit = TOP_MANAGERS // 50
+page_limit =  Settings.ELITE_MANAGERS// 50
 for page in range(1, page_limit + 1):
-    managers = fpl.get_id_top_10k_managers(page)
-    mongo.db["top_10k_managers"].insert_many([{"entry_id": m["entry"]} for m in managers])
+    managers = fpl.get_id_elite_managers(page)
+    mongo.db["elite_managers"].insert_many([{"entry_id": m["entry"]} for m in managers])
 
 

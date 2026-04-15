@@ -5,7 +5,7 @@ import math
 class ExpectedCleanSheets:
     def playerExpectedCleanSheets(self,player,position):
         total = 0.0
-        decay = 0.7
+        decay = 0.8
         weight_sum = 0
         for i,doc in enumerate(player):
             print(doc)

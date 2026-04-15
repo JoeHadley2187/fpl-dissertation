@@ -44,7 +44,7 @@ class FplApi:
             print("Request failed:", e)
         return None
 
-    def get_id_top_10k_managers(self,page):
+    def get_id_elite_managers(self,page):
         try:
             response = requests.get(f"{self.BASE_URL}/leagues-classic/314/standings/?page_standings={page}")
             response.raise_for_status()

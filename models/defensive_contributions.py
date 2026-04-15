@@ -3,7 +3,7 @@ from utils import scoring_rules
 class DefensiveContributions:
     def playerDefensiveContributions(self, player,position):
         total = 0
-        decay = 0.7
+        decay = 0.8
         weight_sum = 0
         if position == "GK":
             return total

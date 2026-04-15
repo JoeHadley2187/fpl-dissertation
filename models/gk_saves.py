@@ -2,7 +2,7 @@ from utils import scoring_rules
 
 def gk_saves(validation_period):
     saves = 0
-    decay = 0.7
+    decay = 0.8
     weight_sum = 0
     for i,doc in enumerate(validation_period):
         weight = decay ** i
