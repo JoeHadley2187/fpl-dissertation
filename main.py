@@ -3,8 +3,6 @@ import pymongo
 from data import fpl_mongo
 from data import elite_ownsership
 from data import fpl_api
-from models import fixture_difficulty
-from helper import position_xp_calculator
 from helper.position_dict import position_dict
 from helper.xp_eo_csv_creator import xp_eo_csv_creator
 from optimisation import pareto
@@ -44,6 +42,8 @@ quantile_dict = {
     "MID": mid_quantiles,
     "FWD": fwd_quantiles,
 }
+low_eo,mid_eo = expected_points_df["effective_ownership"].quantile([0.25,0.75])
+
 
 
 
@@ -59,8 +59,6 @@ quantile_dict = {
 # mid_fig = px.scatter(mid_players, x="effective_ownership", y="expected_points",hover_name="web_name",color = pareto_mask_mid)
 # mid_fig.show()
 #
-# fwd_fig = px.scatter(fwd_players, x="effective_ownership", y="expected_points",hover_name="web_name",color = pareto_mask_fwd)
-# fwd_fig.show()
 
 manager_id = st.text_input("Please enter your manager ID")
 if manager_id:
@@ -81,6 +79,7 @@ if manager_id:
         elif xp < yellow:
             strength = "medium"
         manager_team.append({"Name": player["web_name"],
+                             "player_id": player["id"],
                              "XP": xp,
                              "Strength": strength,
                              })
@@ -95,6 +94,17 @@ if manager_id:
     if not selected.empty:
         with st.sidebar:
             st.write(selected.iloc[0]["Name"])
+            pareto_df = pareto.all_pareto(selected,expected_points_df)
+            differential_eo_pareto = pareto_df[pareto_df["effective_ownership"] < low_eo]
+            balanced_eo_pareto = pareto_df[(pareto_df["effective_ownership"] >= low_eo) & (pareto_df["effective_ownership"] < mid_eo)]
+            safe_eo_pareto = pareto_df[pareto_df["effective_ownership"] >= mid_eo]
+            st.subheader("Safe")
+            st.dataframe(safe_eo_pareto)
+            st.subheader("Balanced")
+            st.dataframe(balanced_eo_pareto)
+            st.subheader("Differential")
+            st.dataframe(differential_eo_pareto)
+
 
 
 else:
