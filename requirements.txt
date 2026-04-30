@@ -1,8 +1,6 @@
 
-numpy==2.0.2
 pandas==2.3.3
 paretoset==1.2.5
-pillow==11.3.0
 plotly==6.7.0
 pymongo==4.17.0
 requests==2.32.5
