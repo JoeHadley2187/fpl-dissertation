@@ -3,7 +3,7 @@ from data import fpl_api as api
 from data import fpl_mongo
 
 fpl = api.FplApi()
-mongo = fpl_mongo.FplMongo("mongodb://localhost:27017/", "fpl_db")
+mongo = fpl_mongo.FplMongo("mongodb+srv://Joey2187:Man-city4163@fpl-cluster.dnjflbx.mongodb.net/?appName=fpl-cluster", "fpl_db")
 mongo.db.drop_collection("players")
 mongo.db.drop_collection("fixtures")
 mongo.db.drop_collection("player-summary")

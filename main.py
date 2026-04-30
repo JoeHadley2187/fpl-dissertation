@@ -13,7 +13,7 @@ import plotly.express as px
 import streamlit as st
 
 
-mongo = fpl_mongo.FplMongo("mongodb://localhost:27017/", "fpl_db")
+mongo = fpl_mongo.FplMongo("mongodb+srv://Joey2187:Man-city4163@fpl-cluster.dnjflbx.mongodb.net/?appName=fpl-cluster", "fpl_db")
 fpl = fpl_api.FplApi()
 if not Settings.USE_XP_CSV:
     xp = xp_eo_csv_creator(mongo,Settings.CURRENT_GAMEWEEK)
@@ -74,9 +74,9 @@ if manager_id:
         strength = "strong"
         player = mongo.db["players"].find_one({"id": pick["element"]})
         red, yellow = quantile_dict.get(position_dict.get(pick["element_type"]))
-        if xp < red:
+        if xp <= red:
             strength = "weak"
-        elif xp < yellow:
+        elif xp <= yellow:
             strength = "medium"
         manager_team.append({"Name": player["web_name"],
                              "player_id": player["id"],
