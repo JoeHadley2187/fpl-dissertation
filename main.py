@@ -64,6 +64,7 @@ manager_id = st.text_input("Please enter your manager ID")
 if manager_id:
     manager_team = []
     manager_picks = fpl.get_managers_picks_for_gw(manager_id,Settings.CURRENT_GAMEWEEK)
+    manager_budget = fpl.get_manager_budget_for_gw(manager_id,Settings.CURRENT_GAMEWEEK)
     st.write(f"Gameweek: {Settings.CURRENT_GAMEWEEK}")
     for pick in manager_picks:
         xp_player = expected_points_df[expected_points_df["player_id"] == pick["element"]]
@@ -93,7 +94,7 @@ if manager_id:
 
     if not selected.empty:
         with st.sidebar:
-            st.write(selected.iloc[0]["Name"])
+            st.write(f" Budget: ${manager_budget/10}M")
             pareto_df = pareto.all_pareto(selected,expected_points_df)
             differential_eo_pareto = pareto_df[pareto_df["effective_ownership"] < low_eo]
             balanced_eo_pareto = pareto_df[(pareto_df["effective_ownership"] >= low_eo) & (pareto_df["effective_ownership"] < mid_eo)]

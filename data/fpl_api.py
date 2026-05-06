@@ -67,6 +67,17 @@ class FplApi:
         except requests.exceptions.RequestException as e:
             print("Request failed:", e)
             return None
+    def get_manager_budget_for_gw(self,id,gw):
+        try:
+            response = requests.get(f"{self.BASE_URL}/entry/{id}/event/{gw}/picks/")
+            response.raise_for_status()
+            data = response.json()
+            return data.get("entry_history", {}).get("bank", None)
+        except requests.exceptions.HTTPError:
+            print("Error retrieving manager budget data, HTTP Status Code: ", response.status_code)
+        except requests.exceptions.RequestException as e:
+            print("Request failed:", e)
+            return None
 
 
 
