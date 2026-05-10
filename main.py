@@ -32,10 +32,10 @@ mid_players = expected_points_df[expected_points_df["position"] == "MID"]
 mid_quantiles = mid_players["expected_points"].quantile([0.25,0.5])
 fwd_players = expected_points_df[expected_points_df["position"] == "FWD"]
 fwd_quantiles = fwd_players["expected_points"].quantile([0.25,0.5])
-pareto_mask_gk = pareto.pareto(gk_players)
-pareto_mask_def = pareto.pareto(def_players)
-pareto_mask_mid = pareto.pareto(mid_players)
-pareto_mask_fwd = pareto.pareto(fwd_players)
+pareto_mask_gk = pareto.pareto_graphs(gk_players)
+pareto_mask_def = pareto.pareto_graphs(def_players)
+pareto_mask_mid = pareto.pareto_graphs(mid_players)
+pareto_mask_fwd = pareto.pareto_graphs(fwd_players)
 quantile_dict = {
     "GK": gk_quantiles,
     "DEF": def_quantiles,
@@ -47,18 +47,34 @@ low_eo,mid_eo = expected_points_df["effective_ownership"].quantile([0.25,0.75])
 
 
 
-#eo_fig = px.pie(expected_points_df, values="expected_points", names="web_name")
+#eo_fig = px.pie(expected_points_df.nlargest(10,"effective_ownership"), values="effective_ownership", names="web_name",color_discrete_sequence=px.colors.sequential.Blues)
 #eo_fig.show()
 
-# gk_fig = px.scatter(gk_players, x="effective_ownership", y="expected_points", hover_name="web_name",color=pareto_mask_gk)
-# gk_fig.show()
-#
-# def_fig = px.scatter(def_players, x="effective_ownership", y="expected_points",hover_name="web_name",color = pareto_mask_def)
-# def_fig.show()
-#
-# mid_fig = px.scatter(mid_players, x="effective_ownership", y="expected_points",hover_name="web_name",color = pareto_mask_mid)
-# mid_fig.show()
-#
+gk_fig = px.scatter(gk_players, x="effective_ownership", y="expected_points", hover_name="web_name",color=pareto_mask_gk,color_discrete_map={
+        True: "orange",
+        False: "blue"
+    })
+#gk_fig.show()
+
+def_fig = px.scatter(def_players, x="effective_ownership", y="expected_points",hover_name="web_name",color = pareto_mask_def,color_discrete_map={
+        True: "orange",
+        False: "blue"
+    })
+
+#def_fig.show()
+
+mid_fig = px.scatter(mid_players, x="effective_ownership", y="expected_points",hover_name="web_name",color = pareto_mask_mid,color_discrete_map={
+        True: "orange",
+        False: "blue"
+    })
+#mid_fig.show()
+
+fwd_fig = px.scatter(fwd_players, x="effective_ownership", y="expected_points",hover_name="web_name",color = pareto_mask_fwd,color_discrete_map={
+        True: "orange",
+        False: "blue"
+    })
+#fwd_fig.show()
+
 
 manager_id = st.text_input("Please enter your manager ID")
 if manager_id:

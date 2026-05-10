@@ -1,5 +1,6 @@
 import pandas as pd
 from paretoset import paretoset
+import plotly.express as px
 
 def all_pareto(selected_players,df):
     stripped_pareto = pareto_strip(selected_players,df)
@@ -7,9 +8,12 @@ def all_pareto(selected_players,df):
 
 def pareto(players):
     mask = paretoset(players[["expected_points", "effective_ownership"]], sense=["max", "min"])
+    px.scatter(players, x="effective_ownership", y="expected_points",hover_name="web_name",color = mask)
     pareto_players = players[mask]
     return pareto_players
-
+def pareto_graphs(players):
+    mask = paretoset(players[["expected_points", "effective_ownership"]], sense=["max", "min"])
+    return mask
 
 def pareto_strip(selected_players,df):
     selected_ids = selected_players["player_id"]
@@ -22,12 +26,12 @@ def pareto_strip(selected_players,df):
     xp_filtered_df = filtered_df[filtered_df["expected_points"] >= filtered_df["expected_points"].quantile(0.5)]
     return xp_filtered_df
 
-def recursive_pareto(pareto_players,players):
-    if len(pareto_players) >= 8:
+def recursive_pareto(pareto_players,players,stack_depth=0):
+    if len(pareto_players) >= 8 or stack_depth >3 :
         return pareto_players
     current_pareto_layer = pareto(players)
     pareto_players = pd.concat([pareto_players, current_pareto_layer])
     filtered_players = players[~players["player_id"].isin(current_pareto_layer["player_id"])]
-    return recursive_pareto(pareto_players,filtered_players)
+    return recursive_pareto(pareto_players,filtered_players,stack_depth=stack_depth+1)
 
 
