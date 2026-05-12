@@ -80,6 +80,7 @@ manager_id = st.text_input("Please enter your manager ID")
 if manager_id:
     manager_team = []
     manager_picks = fpl.get_managers_picks_for_gw(manager_id,Settings.CURRENT_GAMEWEEK)
+    manager_budget = fpl.get_manager_budget_for_gw(manager_id,Settings.CURRENT_GAMEWEEK)
     st.write(f"Gameweek: {Settings.CURRENT_GAMEWEEK}")
     for pick in manager_picks:
         xp_player = expected_points_df[expected_points_df["player_id"] == pick["element"]]
@@ -98,6 +99,7 @@ if manager_id:
                              "player_id": player["id"],
                              "XP": xp,
                              "Strength": strength,
+                             "Price":player["now_cost"],
                              })
     manager_team_df = pd.DataFrame(manager_team)
     manager_team_df["Select"] = False
@@ -109,8 +111,9 @@ if manager_id:
 
     if not selected.empty:
         with st.sidebar:
-            st.write(selected.iloc[0]["Name"])
-            pareto_df = pareto.all_pareto(selected,expected_points_df)
+            available_budget = (selected["Price"].sum() + manager_budget)/10
+            st.write(f" Available budget : ${available_budget}")
+            pareto_df = pareto.all_pareto(selected,expected_points_df[(expected_points_df["Price"]/10)<=available_budget])
             differential_eo_pareto = pareto_df[pareto_df["effective_ownership"] < low_eo]
             balanced_eo_pareto = pareto_df[(pareto_df["effective_ownership"] >= low_eo) & (pareto_df["effective_ownership"] < mid_eo)]
             safe_eo_pareto = pareto_df[pareto_df["effective_ownership"] >= mid_eo]
