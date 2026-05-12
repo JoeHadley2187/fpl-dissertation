@@ -46,7 +46,6 @@ low_eo,mid_eo = expected_points_df["effective_ownership"].quantile([0.25,0.75])
 
 
 
-
 #eo_fig = px.pie(expected_points_df, values="expected_points", names="web_name")
 #eo_fig.show()
 
@@ -83,6 +82,7 @@ if manager_id:
                              "player_id": player["id"],
                              "XP": xp,
                              "Strength": strength,
+                             "Price":player["now_cost"],
                              })
     manager_team_df = pd.DataFrame(manager_team)
     manager_team_df["Select"] = False
@@ -94,8 +94,9 @@ if manager_id:
 
     if not selected.empty:
         with st.sidebar:
-            st.write(f" Budget: ${manager_budget/10}M")
-            pareto_df = pareto.all_pareto(selected,expected_points_df)
+            available_budget = (selected["Price"].sum() + manager_budget)/10
+            st.write(f" Available budget : ${available_budget}")
+            pareto_df = pareto.all_pareto(selected,expected_points_df[(expected_points_df["Price"]/10)<=available_budget])
             differential_eo_pareto = pareto_df[pareto_df["effective_ownership"] < low_eo]
             balanced_eo_pareto = pareto_df[(pareto_df["effective_ownership"] >= low_eo) & (pareto_df["effective_ownership"] < mid_eo)]
             safe_eo_pareto = pareto_df[pareto_df["effective_ownership"] >= mid_eo]

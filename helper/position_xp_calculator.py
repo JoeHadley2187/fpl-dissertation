@@ -21,8 +21,6 @@ def positionXpCalculator(validation_period,position):
     xp += expected_bonus_points.bonus_points(validation_period)
     if pos != "FWD":
         xp += expected_clean_sheets.playerExpectedCleanSheets(validation_period,pos)
-    if pos != "GK":
-        xp += expected_goals.playerExpectedGoals(validation_period,pos)
     if pos == "GK":
         xp += gk_saves(validation_period)
     return xp

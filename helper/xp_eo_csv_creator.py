@@ -26,7 +26,8 @@ def xp_eo_csv_creator(mongo,gw):
             "web_name": player["web_name"],
             "position": position_dict.get(player["element_type"]),
             "expected_points": adjusted_xp,
-            "effective_ownership": eo[playertocheck]
+            "effective_ownership": eo[playertocheck],
+            "Price": player["now_cost"]
         })
     return pd.DataFrame(expected_points_rows)
 def xp_csv_creator(mongo,gw):
@@ -47,5 +48,6 @@ def xp_csv_creator(mongo,gw):
                     "player_id": player["id"],
                     "web_name": player["web_name"],
                     "position": position_dict.get(player["element_type"]),
-                    "expected_points": adjusted_xp})
+                    "expected_points": adjusted_xp,
+                    "Price": player["now_cost"]})
         return pd.DataFrame(expected_points_rows)
