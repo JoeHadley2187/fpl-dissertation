@@ -10,6 +10,13 @@ import plotly.express as px
 import streamlit as st
 
 
+
+"""
+This file controls the main flow of the program
+it initially sets up quantiles for xP interpolation
+before presenting a streamlit application which allows users
+to view their own teams and view recommended changes 
+"""
 mongo = fpl_mongo.FplMongo("mongodb+srv://Joey2187:XXXXXXX@fpl-cluster.dnjflbx.mongodb.net/?appName=fpl-cluster", "fpl_db")
 fpl = fpl_api.FplApi()
 try:
