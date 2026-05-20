@@ -149,6 +149,7 @@ if manager_id and gw:
                 st.subheader("Safe")
                 safe_eo_pareto = st.data_editor(
                     safe_eo_pareto,
+                    key="safe_eo_pareto",
                     column_config={
                     "player_id": None,
                     "Price": st.column_config.NumberColumn(
@@ -165,6 +166,7 @@ if manager_id and gw:
                 st.subheader("Balanced")
                 balanced_eo_pareto = st.data_editor(
                     balanced_eo_pareto,
+                    key="balanced_eo_pareto",
                     column_config={
                     "player_id": None,
                     "Price": st.column_config.NumberColumn(
@@ -180,6 +182,7 @@ if manager_id and gw:
                 st.subheader("Differential")
                 differential_eo_pareto = st.data_editor(
                     differential_eo_pareto,
+                    key = "differential_eo_pareto",
                     column_config={
                     "player_id": None,
                     "Price": st.column_config.NumberColumn(
