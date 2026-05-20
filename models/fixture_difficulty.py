@@ -17,7 +17,9 @@ def fixture_difficulty(mongo,player,gw,xp):
     "event":gw,
     "element": player["id"]
     }))
+ #checks to see if a game is yet to be played
  if len(next_fixtures) > 0:
+     #loops to account fot the potential of double gameweeks
         for f in next_fixtures:
             difficulty += f["difficulty"]
         return xp * len(next_fixtures) * (1.6 - (0.2 * difficulty/len(next_fixtures)))
@@ -26,6 +28,7 @@ def fixture_difficulty(mongo,player,gw,xp):
             "round": gw,
             "element": player["id"]
         }))
+        #no fixture = blank gameweek so player gets 0 points automatically
         if len(history) == 0:
             return 0
         fixture_ids = [h["fixture"] for h in history]
@@ -33,6 +36,8 @@ def fixture_difficulty(mongo,player,gw,xp):
         next_fixtures = list(mongo.db["fixtures"].find({
             "id": {"$in": fixture_ids}
         }))
+        #loops similar to above and also assigns difficulty separately
+        #due to difficulty being stored separately in API for historical fixtures
         for f in next_fixtures:
             if player["team"] == f["team_h"]:
                 difficulty += f["team_h_difficulty"]

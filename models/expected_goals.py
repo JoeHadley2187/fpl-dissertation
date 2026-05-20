@@ -2,10 +2,9 @@ from utils import scoring_rules
 
 
 class ExpectedGoals:
-    def playerExpectedGoals(self,player,position):
+    def playerExpectedGoals(self,player,position,decay):
         i = 0
         j = 0
-        decay = 0.8
         weight_sum = 0
         for k ,doc in enumerate(player):
             weight = decay ** k

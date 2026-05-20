@@ -8,7 +8,7 @@ import pandas as pd
 
 
 
-def xp_eo_csv_creator(mongo,gw):
+def xp_eo_csv_creator(mongo,gw,decay):
     fpl = api.FplApi()
     eo = elite_ownsership.effective_ownership(fpl, mongo.db["elite_managers"],gw)
     expected_points_rows = []
@@ -16,38 +16,41 @@ def xp_eo_csv_creator(mongo,gw):
         player = mongo.db["players"].find_one({"id": playertocheck})
         validation_period = list(
             mongo.db["all_histories"].find({
-                "round": {"$gte": gw - Settings.FORM_PERIOD, "$lte": gw},
+                "round": {"$lte": gw},
                 "element": player["id"]
-            }).sort("round",-1))
-        xp = position_xp_calculator.positionXpCalculator(validation_period, player["element_type"])
+            }).sort([
+                ("round",-1),
+                ("kickoff_time",-1)]).limit(Settings.FORM_PERIOD))
+
+        xp = position_xp_calculator.positionXpCalculator(validation_period, player["element_type"],decay)
         adjusted_xp = fixture_difficulty.fixture_difficulty(mongo, player, gw + 1, xp)
         expected_points_rows.append({
             "player_id": player["id"],
             "web_name": player["web_name"],
             "position": position_dict.get(player["element_type"]),
-            "expected_points": adjusted_xp,
-            "effective_ownership": eo[playertocheck],
+            "XP": adjusted_xp,
+            "EEO": eo[playertocheck],
             "Price": player["now_cost"]
         })
     return pd.DataFrame(expected_points_rows)
-def xp_csv_creator(mongo,gw):
+def xp_csv_creator(mongo,gw,decay):
         expected_points_rows = []
         players = mongo.db["players"].find()
         for player in players:
-            print(player["web_name"])
-            print("wooooo")
             validation_period = list(
-                mongo.db["all_histories"].find({
-                    "round": {"$gte": gw - Settings.FORM_PERIOD, "$lte": gw},
-                    "element": player["id"]
-                }).sort("round",-1))
+            mongo.db["all_histories"].find({
+                "round": {"$lte": gw},
+                "element": player["id"]
+            }).sort([
+                ("round",-1),
+                ("kickoff_time",-1)]).limit(Settings.FORM_PERIOD))
             if len(validation_period) > 0:
-                xp = position_xp_calculator.positionXpCalculator(validation_period, player["element_type"])
+                xp = position_xp_calculator.positionXpCalculator(validation_period, player["element_type"],decay)
                 adjusted_xp = fixture_difficulty.fixture_difficulty(mongo, player, gw + 1, xp)
                 expected_points_rows.append({
                     "player_id": player["id"],
                     "web_name": player["web_name"],
                     "position": position_dict.get(player["element_type"]),
-                    "expected_points": adjusted_xp,
+                    "XP": adjusted_xp,
                     "Price": player["now_cost"]})
         return pd.DataFrame(expected_points_rows)

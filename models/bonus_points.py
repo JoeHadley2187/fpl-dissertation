@@ -1,9 +1,8 @@
 from utils import scoring_rules
 
 class BonusPoints:
-    def bonus_points(self,player):
+    def bonus_points(self,player,decay):
         total = 0
-        decay = 0.8
         weight_sum = 0
         for i,docs in enumerate(player):
             weight = decay ** i
