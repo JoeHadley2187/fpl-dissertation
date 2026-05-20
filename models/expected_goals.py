@@ -3,6 +3,13 @@ from utils import scoring_rules
 
 class ExpectedGoals:
     def playerExpectedGoals(self,player,position,decay):
+        """
+
+        :param player: The form period to be observed
+        :param position: the players position as goal points vary on position
+        :param decay: The decay rate
+        :return: Combined expected points from goals and assists
+        """
         i = 0
         j = 0
         weight_sum = 0

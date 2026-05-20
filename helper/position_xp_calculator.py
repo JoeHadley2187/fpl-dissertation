@@ -7,7 +7,16 @@ from models.gk_saves import gk_saves
 from models.bonus_points import BonusPoints
 from helper.position_dict import position_dict
 
+
+
 def positionXpCalculator(validation_period,position,decay):
+    """
+
+    :param validation_period: The period of form to be analysed
+    :param position: The players position
+    :param decay: the decay rate for weighted gameweeks
+    :return: a players expected points ready for fixture multiplier
+    """
     expected_minutes = ExpectedMinutes()
     expected_goals = ExpectedGoals()
     expected_defensive_contributions = DefensiveContributions()

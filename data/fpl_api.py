@@ -2,6 +2,7 @@ import requests
 
 
 class FplApi:
+    #Handles requests to FPL API
     def __init__(self):
         self.BASE_URL = "https://fantasy.premierleague.com/api"
 

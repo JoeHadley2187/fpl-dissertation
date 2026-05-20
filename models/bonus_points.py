@@ -2,6 +2,12 @@ from utils import scoring_rules
 
 class BonusPoints:
     def bonus_points(self,player,decay):
+        """
+
+        :param player: The players history to be calculated over
+        :param decay: the decay rate
+        :return: weighted sum of expected bonus points
+        """
         total = 0
         weight_sum = 0
         for i,docs in enumerate(player):

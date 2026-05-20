@@ -2,6 +2,11 @@ from utils import scoring_rules
 
 class ExpectedMinutes():
     def playerExpectedMinutes(self, player,decay):
+        """
+        :param player: The form period to be observed
+        :param decay: the decay rate
+        :return:
+        """
         i = 0
         weight_sum = 0
         for k,doc in enumerate(player):

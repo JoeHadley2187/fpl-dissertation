@@ -1,27 +1,26 @@
 import pymongo
 
 from data import fpl_mongo
-from data import elite_ownsership
 from data import fpl_api
 from helper.position_dict import position_dict
-from helper.xp_eo_csv_creator import xp_eo_csv_creator
-from helper import actual_points
 from optimisation import pareto
-from optimisation import mean_average_error
 from config.settings import Settings
 import pandas as pd
 import plotly.express as px
 import streamlit as st
 
 
-mongo = fpl_mongo.FplMongo("mongodb+srv://Joey2187:Man-city4163@fpl-cluster.dnjflbx.mongodb.net/?appName=fpl-cluster", "fpl_db")
+mongo = fpl_mongo.FplMongo("mongodb+srv://Joey2187:XXXXXXX@fpl-cluster.dnjflbx.mongodb.net/?appName=fpl-cluster", "fpl_db")
 fpl = fpl_api.FplApi()
 try:
-    expected_points_only_df = pd.read_csv("data/expected_points14.csv")
-    expected_points_df = pd.read_csv("data/expected_points_eo14.csv")
+    expected_points_only_df = pd.read_csv("data/expected_points.csv")
+    expected_points_df = pd.read_csv("data/expected_points_eo.csv")
 
 except FileNotFoundError:
     print("Generate CSVS first")
+
+#This section sets up the inetrpolation for how strong players are compared to other
+#in their relative position
 gk_players = expected_points_df[expected_points_df["position"] == "GK"]
 gk_quantiles = gk_players["XP"].quantile([0.25,0.5])
 def_players = expected_points_df[expected_points_df["position"] == "DEF"]
@@ -42,53 +41,16 @@ quantile_dict = {
 }
 low_eo,mid_eo = expected_points_df["EEO"].quantile([0.25,0.75])
 
-differntial_picks = expected_points_df[
-    (expected_points_df["EEO"] < 20) &
-    (expected_points_df["web_name"] != "Henderson")
-]
-
-
-eo_fig = px.pie(expected_points_df.nlargest(10,"EEO"), values="EEO", names="web_name",color_discrete_sequence=px.colors.sequential.Rainbow_r)
-eo_fig.update_traces(textinfo='label')
-#eo_fig.show()
-
-gk_fig = px.scatter(gk_players, x="EEO", y="XP", hover_name="web_name",color=pareto_mask_gk,color_discrete_map={
-        True: "orange",
-        False: "blue"
-    })
-#gk_fig.show()
-def_fig = px.scatter(def_players, x="EEO", y="XP",hover_name="web_name",color = pareto_mask_def,color_discrete_map={
-        True: "orange",
-        False: "blue"
-    })
-def_fig.update_layout(
-    xaxis_title="EEO(%)",
-    yaxis_title="XP",
-)
-
-#def_fig.show()
-
-mid_fig = px.scatter(mid_players, x="EEO", y="XP",hover_name="web_name",color = pareto_mask_mid,color_discrete_map={
-        True: "orange",
-        False: "blue"
-    })
-#mid_fig.show()
-
-fwd_fig = px.scatter(fwd_players, x="EEO", y="XP",hover_name="web_name",color = pareto_mask_fwd,color_discrete_map={
-        True: "orange",
-        False: "blue"
-    })
-#fwd_fig.show()
+#Start of main User Interface
 manager_id = st.text_input("Enter manager ID")
-gw = st.radio("Select gameweek", [14, 38])
-if manager_id and gw:
-        expected_points_df = pd.read_csv(f"data/expected_points_eo{gw}.csv")
-        expected_points_only_df = pd.read_csv(f"data/expected_points{gw}.csv")
-        Settings.TARGET_GAMEWEEK = gw
+if manager_id :
+        expected_points_df = pd.read_csv(f"data/expected_points_eo{Settings.TARGET_GAMEWEEK}.csv")
+        expected_points_only_df = pd.read_csv(f"data/expected_points{Settings.TARGET_GAMEWEEK}.csv")
         manager_team = []
         manager_picks = fpl.get_managers_picks_for_gw(manager_id,Settings.TARGET_GAMEWEEK-1)
         manager_budget = fpl.get_manager_budget_for_gw(manager_id,Settings.TARGET_GAMEWEEK-1)
         st.write(f"Gameweek: {Settings.TARGET_GAMEWEEK}")
+        #Displays manager picks to main screen
         for pick in manager_picks:
             xp_player = expected_points_only_df[expected_points_only_df["player_id"] == pick["element"]]
             if xp_player.empty:
@@ -131,7 +93,7 @@ if manager_id and gw:
             selected = edited_df[edited_df["Select"]]
         else:
             selected = pd.DataFrame()
-
+        #If transfer is selected open sidebar and provide transfer recomendations
         if not selected.empty:
             with st.sidebar:
                 ignore_budget = st.checkbox("Ignore budget?",False)
@@ -216,7 +178,8 @@ if manager_id and gw:
 
 
 else:
-    st.write("Select gameweek")
+    #Wait until manager_id is selected
+    st.write("Enter manager_id")
 
 
 

@@ -7,7 +7,7 @@ from helper.position_dict import position_dict
 import pandas as pd
 
 
-
+#Helper functions to create the two different type of CSV's ready for datframes used later in software
 def xp_eo_csv_creator(mongo,gw,decay):
     fpl = api.FplApi()
     eo = elite_ownsership.effective_ownership(fpl, mongo.db["elite_managers"],gw)

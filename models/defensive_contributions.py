@@ -2,6 +2,13 @@ from utils import scoring_rules
 
 class DefensiveContributions:
     def playerDefensiveContributions(self, player,position,decay):
+        """
+
+        :param player: form period to be observed
+        :param position: position of players as different positions require different defcon
+        :param decay: the decay rate
+        :return: expected points from defensive contributions
+        """
         total = 0
         weight_sum = 0
         if position == "GK":
